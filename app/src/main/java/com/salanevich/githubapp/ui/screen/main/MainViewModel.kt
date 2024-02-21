@@ -19,6 +19,10 @@ class MainViewModel(
 
     override val container = viewModelScope.container<MainState, MainSideEffect>(MainState())
 
+    init {
+        reduce(MainAction.Load)
+    }
+
     fun reduce(action: MainAction) {
         when (action) {
             MainAction.Load -> loadUsers()
@@ -40,7 +44,7 @@ class MainViewModel(
 
     private fun searchUsers(query: String) = intent {
         val filteredUsers = searchUseCase(SearchParams(query, state.users))
-        reduce { state.copy(filteredUsers = filteredUsers) }
+        reduce { state.copy(query = query, filteredUsers = filteredUsers) }
     }
 
 }
@@ -53,6 +57,7 @@ sealed class MainAction {
 
 data class MainState(
     val users: List<UserDomain> = emptyList(),
+    val query: String = "",
     val filteredUsers: List<UserDomain> = emptyList(),
     val loading: Boolean = true
 )
